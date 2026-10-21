@@ -1,13 +1,12 @@
 import {useState, useEffect} from 'react';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/NavBar';
 import TrainList from './TrainList';
-import Train from '../components/Train';
 
 export default function LinesPage() {
 
-  const [color, setColor] = useState("gold");
+  const [color, setColor] = useState("GOLD");
   const [stationData, setStationData] = useState([]);
-  const [stationFilter, setStationFilter] = useState("All Stations");
+  const [stationFilter, setStationFilter] = useState("ALL STATIONS");
   const [stationList, setStationList] = useState([]);
 
   // get train data for color line
@@ -42,10 +41,10 @@ export default function LinesPage() {
   }, [color])
 
   // handle filtering by station
-  const handleClick = (station) => {
+  const handleClickStation = (station) => {
     console.log(station);
     if (station === stationFilter) {
-      setStationFilter("All Stations");
+      setStationFilter("ALL STATIONS");
     } else {
       setStationFilter(station)
     }
@@ -53,7 +52,12 @@ export default function LinesPage() {
 
   return (
     <>
-      <Navbar stationList={stationList} onClick={handleClick}/>
+      <button onClick={() => setColor("GOLD")}>GOLD</button>
+      <button onClick={() => setColor("RED")}>RED</button>
+      <button onClick={() => setColor("BLUE")}>BLUE</button>
+      <button onClick={() => setColor("GREEN")}>GREEN</button>
+      <h2>{color}</h2>
+      <Navbar stationList={stationList} onClick={handleClickStation}/>
       <TrainList stationData={stationData} stationFilter={stationFilter}/>
     </>
   );

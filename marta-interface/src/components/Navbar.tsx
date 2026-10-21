@@ -8,6 +8,7 @@ export default function Navbar({stationList, onClick}) {
         })
     return (
         <>
+            <button onClick={() => onClick("ALL STATIONS")}>ALL STATIONS</button>
             {stationNavBar}
         </>
     )

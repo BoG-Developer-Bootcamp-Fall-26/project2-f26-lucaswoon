@@ -6,7 +6,7 @@ export default function TrainList({stationData, stationFilter}) {
   
   const trains = stationData
     .filter((train) => {
-      if (stationFilter === "All Stations") {
+      if (stationFilter === "ALL STATIONS") {
         return train;
       } else {
         return train.MARTA_STATION === stationFilter;
