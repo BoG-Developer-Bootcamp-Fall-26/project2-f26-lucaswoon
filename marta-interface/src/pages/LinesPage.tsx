@@ -6,8 +6,12 @@ export default function LinesPage() {
 
   const [color, setColor] = useState("GOLD");
   const [stationData, setStationData] = useState([]);
-  const [stationFilter, setStationFilter] = useState("ALL STATIONS");
   const [stationList, setStationList] = useState([]);
+  const [directions, setDirections] = useState(["Northbound", "Southbound"]);
+  const [stationFilter, setStationFilter] = useState("ALL STATIONS");
+  const [arrivingFilter, setArrivingFilter] = useState("All");
+  const [directionsFilter, setDirectionsFilter] = useState("All");
+ 
 
   // get train data for color line
   useEffect(() => {
@@ -40,8 +44,21 @@ export default function LinesPage() {
     fetchData();
   }, [color])
 
+  // reset filtering after color change
+  useEffect(() => {
+    setStationFilter("ALL STATIONS");
+
+    // change direction buttons
+    console.log(color);
+    if (color === "RED" || color === "GOLD") {
+        setDirections(["Northbound", "Southbound"]);
+    } else {
+        setDirections(["Eastbound", "Westbound"]);
+    }
+  }, [color])
+
   // handle filtering by station
-  const handleClickStation = (station) => {
+  const handleClickStation = (station: string) => {
     console.log(station);
     if (station === stationFilter) {
       setStationFilter("ALL STATIONS");
@@ -50,15 +67,40 @@ export default function LinesPage() {
     }
   }
 
+  // handle filtering by arriving/scheduled
+  const handleClickArriving = (button: string) => {
+    if (arrivingFilter === button) {
+        setArrivingFilter("All");
+    } else {
+        setArrivingFilter(button);
+    }
+  }
+
+  const handleClickDirection = (button: string) => {
+    if (directionsFilter === button) {
+        setDirectionsFilter("All");
+    } else {
+        setDirectionsFilter(button);
+    }
+  }
+
   return (
     <>
-      <button onClick={() => setColor("GOLD")}>GOLD</button>
-      <button onClick={() => setColor("RED")}>RED</button>
-      <button onClick={() => setColor("BLUE")}>BLUE</button>
-      <button onClick={() => setColor("GREEN")}>GREEN</button>
+      <div>
+        <button onClick={() => setColor("GOLD")}>GOLD</button>
+        <button onClick={() => setColor("RED")}>RED</button>
+        <button onClick={() => setColor("BLUE")}>BLUE</button>
+        <button onClick={() => setColor("GREEN")}>GREEN</button>
+      </div>
       <h2>{color}</h2>
+      <div>
+        <button onClick={() => handleClickArriving("Arriving")}>Arriving</button>
+        <button onClick={() => handleClickArriving("Scheduled")}>Scheduled</button>
+        <button onClick={() => handleClickDirection(directions[0])}>{directions[0]}</button>
+        <button onClick={() => handleClickDirection(directions[1])}>{directions[1]}</button>
+      </div>
       <Navbar stationList={stationList} onClick={handleClickStation}/>
-      <TrainList stationData={stationData} stationFilter={stationFilter}/>
+      <TrainList stationData={stationData} stationFilter={stationFilter} arrivingFilter={arrivingFilter} directionsFilter={directionsFilter}/>
     </>
   );
 }

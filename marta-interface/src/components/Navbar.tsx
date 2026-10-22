@@ -8,6 +8,7 @@ export default function Navbar({stationList, onClick}) {
         })
     return (
         <>
+            <h5>Select your starting station</h5>
             <button onClick={() => onClick("ALL STATIONS")}>ALL STATIONS</button>
             {stationNavBar}
         </>
