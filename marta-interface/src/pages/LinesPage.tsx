@@ -1,9 +1,13 @@
 import {useState, useEffect} from 'react';
 import Navbar from '../components/NavBar';
 import TrainList from './TrainList';
+import { useParams } from 'react-router';
+import { Link } from 'react-router';
 
 export default function LinesPage() {
 
+
+  const paramColor = useParams().color;
   const [color, setColor] = useState("GOLD");
   const [stationData, setStationData] = useState([]);
   const [stationList, setStationList] = useState([]);
@@ -11,7 +15,17 @@ export default function LinesPage() {
   const [stationFilter, setStationFilter] = useState("ALL STATIONS");
   const [arrivingFilter, setArrivingFilter] = useState("All");
   const [directionsFilter, setDirectionsFilter] = useState("All");
- 
+
+  // get color data from dynamic link 
+  // (idk how to make it such that if its not any of the colours or undefined to redirect to Not Found Page)
+  useEffect(() => {
+    if (
+      paramColor &&
+      ["GOLD", "RED", "BLUE", "GREEN"].includes(paramColor.toUpperCase())
+    ) {
+      setColor(paramColor.toUpperCase());
+    }
+  }, [paramColor]);
 
   // get train data for color line
   useEffect(() => {
@@ -23,7 +37,6 @@ export default function LinesPage() {
           }
           
           const data = await response.json();
-          console.log(data);
           setStationData(data);
       }
       fetchData();
@@ -49,7 +62,6 @@ export default function LinesPage() {
     setStationFilter("ALL STATIONS");
 
     // change direction buttons
-    console.log(color);
     if (color === "RED" || color === "GOLD") {
         setDirections(["Northbound", "Southbound"]);
     } else {
@@ -59,7 +71,6 @@ export default function LinesPage() {
 
   // handle filtering by station
   const handleClickStation = (station: string) => {
-    console.log(station);
     if (station === stationFilter) {
       setStationFilter("ALL STATIONS");
     } else {
@@ -84,23 +95,64 @@ export default function LinesPage() {
     }
   }
 
-  return (
-    <>
-      <div>
-        <button onClick={() => setColor("GOLD")}>GOLD</button>
-        <button onClick={() => setColor("RED")}>RED</button>
-        <button onClick={() => setColor("BLUE")}>BLUE</button>
-        <button onClick={() => setColor("GREEN")}>GREEN</button>
+  
+return (
+    <div className="bg-white text-black">
+      <div className="flex items-center justify-evenly gap-2 border-b border-gray-300 px-4 py-2">
+        <Link to="/lines/GOLD" className="w-1/5 border border-black bg-[#ffd400] px-2 py-2 text-center font-semibold text-white hover:brightness-95">
+          Gold
+        </Link>
+  
+        <Link to="/lines/RED" className="w-1/5 border border-black bg-[#ff0000] px-2 py-2 text-center font-semibold text-white hover:brightness-95">
+          Red
+        </Link>
+  
+        <Link to="/lines/BLUE" className="w-1/5 border border-black bg-[#1600ff] px-2 py-2 text-center font-semibold text-white hover:brightness-95">
+          Blue
+        </Link>
+  
+        <Link to="/lines/GREEN" className="w-1/5 border border-black bg-[#008000] px-2 py-2 text-center font-semibold text-white hover:brightness-95">
+          Green
+        </Link>
       </div>
-      <h2>{color}</h2>
-      <div>
-        <button onClick={() => handleClickArriving("Arriving")}>Arriving</button>
-        <button onClick={() => handleClickArriving("Scheduled")}>Scheduled</button>
-        <button onClick={() => handleClickDirection(directions[0])}>{directions[0]}</button>
-        <button onClick={() => handleClickDirection(directions[1])}>{directions[1]}</button>
+      <header className="flex items-center justify-center border-b border-gray-300">
+        <h1 className="text-4xl font-bold">
+          {color}
+        </h1>
+      </header>
+  
+      <div className="flex items-stretch">
+        {/*not sure how to make navbar stretch down when there are many trains*/}
+        <div className="min-h-[calc(100vh-100px)] h-full w-1/4 shrink-0 bg-[#231f20] px-5 py-4 text-white">
+          <Navbar stationList={stationList} onClick={handleClickStation}/>
+        </div>
+        <div className="flex-1">
+          <div className="flex flex-wrap items-center justify-evenly gap-3 border-b border-black px-3 py-4">
+            {[ "Arriving", "Scheduled", directions[0], directions[1] ].map(
+              (button) => (
+                <button key={button} onClick={() => {
+                    if (button === "Arriving" || button === "Scheduled") {
+                      handleClickArriving(button);
+                    } else {
+                      handleClickDirection(button);
+                    }
+                  }}
+                  className="min-w-28 rounded-lg border border-gray-600 px-5 py-2 font-medium hover:bg-gray-100"
+                >
+                  {button}
+                </button>
+              )
+            )}
+          </div>
+  
+          <TrainList
+            stationData={stationData}
+            stationFilter={stationFilter}
+            arrivingFilter={arrivingFilter}
+            directionsFilter={directionsFilter}
+          />
+        </div>
       </div>
-      <Navbar stationList={stationList} onClick={handleClickStation}/>
-      <TrainList stationData={stationData} stationFilter={stationFilter} arrivingFilter={arrivingFilter} directionsFilter={directionsFilter}/>
-    </>
+    </div>
   );
-}
+}  

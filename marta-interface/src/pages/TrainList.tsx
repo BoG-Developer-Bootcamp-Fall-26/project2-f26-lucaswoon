@@ -13,7 +13,7 @@ export default function TrainList({stationData, stationFilter, arrivingFilter, d
         return train.MARTA_STATION === stationFilter;
       }
     })
-    // filter by arriving
+    // filter by arriving (not sure if I'm interpreting this right)
     .filter((train) => {
       if (arrivingFilter === "All") {
         return train;
@@ -31,6 +31,8 @@ export default function TrainList({stationData, stationFilter, arrivingFilter, d
         return train.DIRECTION === directionsFilter[0];
       }
     })
+  
+  const mappedTrains = trains
     .map((train) => {
       // if you have time fine unique keys (train.TRAIN_ID is not unique)
       return (
@@ -39,8 +41,8 @@ export default function TrainList({stationData, stationFilter, arrivingFilter, d
   })
 
   return (
-    <>
-      {trains}
-    </>
+    <div className="py-5 px-5">
+      {trains.length === 0 ? "No Current Trains Match Filters": mappedTrains}
+    </div>
   );
 }
